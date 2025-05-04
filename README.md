@@ -126,4 +126,4 @@ pytest
 
 ## Лицензия
 
-MIT
+MIPT
