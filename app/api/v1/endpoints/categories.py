@@ -3,16 +3,11 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
-from app.core.security import verify_token
+from app.core.security import get_current_user
 from app.crud import category as category_crud
 from app.schemas.category import Category, CategoryCreate, CategoryUpdate
 
 router = APIRouter()
-
-async def get_current_user(token: str = Depends(verify_token)):
-    if not token:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    return token.sub
 
 @router.get("/", response_model=List[Category])
 async def read_categories(

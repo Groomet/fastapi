@@ -32,7 +32,10 @@ def verify_token(token: str) -> Optional[TokenPayload]:
     # Проверка валидности токена
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
-        return TokenPayload(sub=payload.get("sub"))
+        sub = payload.get("sub")
+        if sub is None:
+            return None
+        return TokenPayload(sub=int(sub))
     except JWTError:
         return None
 
