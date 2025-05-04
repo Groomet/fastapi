@@ -1,64 +1,38 @@
 from typing import List, Optional
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update, delete
-
+from sqlalchemy.orm import Session
 from app.models.task import Task
 from app.schemas.task import TaskCreate, TaskUpdate
-from app.core.priority import calculate_priority
 
-async def get_task(db: AsyncSession, task_id: int, user_id: int) -> Optional[Task]:
-    result = await db.execute(
-        select(Task).where(Task.id == task_id, Task.user_id == user_id)
-    )
-    return result.scalar_one_or_none()
+def get_task(db: Session, task_id: int) -> Optional[Task]:
+    return db.query(Task).filter(Task.id == task_id).first()
 
-async def get_tasks(
-    db: AsyncSession,
-    user_id: int,
-    skip: int = 0,
-    limit: int = 100
-) -> List[Task]:
-    result = await db.execute(
-        select(Task)
-        .where(Task.user_id == user_id)
-        .offset(skip)
-        .limit(limit)
-    )
-    return result.scalars().all()
+def get_user_tasks(db: Session, user_id: int) -> List[Task]:
+    return db.query(Task).filter(Task.user_id == user_id).all()
 
-async def create_task(db: AsyncSession, task: TaskCreate, user_id: int) -> Task:
+def create_task(db: Session, task: TaskCreate, user_id: int) -> Task:
     db_task = Task(
-        **task.model_dump(),
+        **task.dict(),
         user_id=user_id
     )
-    db_task.priority = calculate_priority(db_task)
     db.add(db_task)
-    await db.commit()
-    await db.refresh(db_task)
+    db.commit()
+    db.refresh(db_task)
     return db_task
 
-async def update_task(
-    db: AsyncSession,
-    task_id: int,
-    task: TaskUpdate,
-    user_id: int
-) -> Optional[Task]:
-    db_task = await get_task(db, task_id, user_id)
-    if not db_task:
-        return None
-    
-    update_data = task.model_dump(exclude_unset=True)
-    for field, value in update_data.items():
-        setattr(db_task, field, value)
-    
-    db_task.priority = calculate_priority(db_task)
-    await db.commit()
-    await db.refresh(db_task)
+def update_task(db: Session, task_id: int, task: TaskUpdate) -> Optional[Task]:
+    db_task = get_task(db, task_id)
+    if db_task:
+        update_data = task.dict(exclude_unset=True)
+        for key, value in update_data.items():
+            setattr(db_task, key, value)
+        db.commit()
+        db.refresh(db_task)
     return db_task
 
-async def delete_task(db: AsyncSession, task_id: int, user_id: int) -> bool:
-    result = await db.execute(
-        delete(Task).where(Task.id == task_id, Task.user_id == user_id)
-    )
-    await db.commit()
-    return result.rowcount > 0 
+def delete_task(db: Session, task_id: int) -> bool:
+    db_task = get_task(db, task_id)
+    if db_task:
+        db.delete(db_task)
+        db.commit()
+        return True
+    return False 

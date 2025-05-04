@@ -1,30 +1,39 @@
-from datetime import datetime
-from typing import Optional
+from datetime import datetime, date
+from typing import Optional, List
 from pydantic import BaseModel, Field
 
 class TaskBase(BaseModel):
     title: str
     description: Optional[str] = None
-    priority: float = Field(default=0.0, ge=0.0, le=1.0)
-    status: str = Field(default="pending")
+    priority: int = Field(ge=1, le=5, default=1)
+    due_date: Optional[date] = None
+    estimated_duration: Optional[float] = None
 
 class TaskCreate(TaskBase):
     pass
 
 class TaskUpdate(TaskBase):
     title: Optional[str] = None
-    description: Optional[str] = None
-    priority: Optional[float] = None
     status: Optional[str] = None
 
 class TaskInDB(TaskBase):
     id: int
-    user_id: int
+    status: str
     created_at: datetime
     updated_at: datetime
+    user_id: int
 
     class Config:
         from_attributes = True
 
 class Task(TaskInDB):
-    pass 
+    pass
+
+class ScheduledTask(TaskInDB):
+    start_time: datetime
+    end_time: datetime
+
+class ScheduleResponse(BaseModel):
+    tasks: List[ScheduledTask]
+    total_duration: float
+    utilization_rate: float 
