@@ -6,8 +6,10 @@ class TaskBase(BaseModel):
     title: str
     description: Optional[str] = None
     priority: int = Field(ge=1, le=5, default=1)
+    status: Optional[str] = "pending"
     due_date: Optional[date] = None
     estimated_duration: Optional[float] = None
+    category_id: Optional[int] = None
 
 class TaskCreate(TaskBase):
     pass
