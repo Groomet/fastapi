@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+from fastapi.security import OAuth2PasswordBearer
 
 from app.core.config import settings
 from app.core.database import init_db
@@ -32,6 +33,8 @@ app.add_middleware(
 
 # Подключение основного роутера API
 app.include_router(api_router, prefix=settings.API_V1_STR)
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 if __name__ == "__main__":
     import uvicorn
