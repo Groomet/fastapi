@@ -1,21 +1,21 @@
 # Task Management API
 
-A FastAPI-based task management system with automatic priority calculation and user authentication.
+Система управления задачами на FastAPI с автоматическим расчетом приоритета и аутентификацией пользователей.
 
-## Features
+## Возможности
 
-- User authentication with JWT tokens
-- Task management (CRUD operations)
-- Automatic task prioritization based on:
-  - Time since creation
-  - Task status
-  - User-defined priority
-- SQLite database with async support
-- Comprehensive test coverage
-- RESTful API design
-- Swagger UI documentation
+- Аутентификация пользователей с помощью JWT токенов
+- Управление задачами (CRUD-операции)
+- Автоматический расчет приоритета задачи на основе:
+  - Времени с момента создания
+  - Статуса задачи
+  - Приоритета, заданного пользователем
+- База данных SQLite с поддержкой асинхронности
+- Покрытие тестами
+- RESTful API
+- Документация Swagger UI
 
-## Project Structure
+## Структура проекта
 
 ```
 .
@@ -48,14 +48,14 @@ A FastAPI-based task management system with automatic priority calculation and u
 └── README.md
 ```
 
-## Setup
+## Установка
 
-1. Create a virtual environment:
+1. Создайте виртуальное окружение:
 ```bash
 python -m venv .venv
 ```
 
-2. Activate the virtual environment:
+2. Активируйте виртуальное окружение:
 - Windows:
 ```bash
 .venv\Scripts\activate
@@ -65,65 +65,65 @@ python -m venv .venv
 source .venv/bin/activate
 ```
 
-3. Install dependencies:
+3. Установите зависимости:
 ```bash
 pip install -r requirements.txt
 ```
 
-4. Create a `.env` file in the root directory (optional):
+4. Создайте файл `.env` в корне проекта (опционально):
 ```env
 SECRET_KEY=your-secret-key
 DEBUG=True
 ```
 
-## Running the Application
+## Запуск приложения
 
-To run the development server:
+Для запуска сервера в режиме разработки:
 ```bash
 python main.py
 ```
 
-The API will be available at `http://localhost:8000`
+API будет доступен по адресу `http://localhost:8000`
 
-## API Documentation
+## Документация API
 
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
 
-## API Endpoints
+## Эндпоинты API
 
-### Authentication
+### Аутентификация
 
-- `POST /api/v1/auth/register` - Register a new user
-- `POST /api/v1/auth/login` - Login and get access token
+- `POST /api/v1/auth/register` - Регистрация нового пользователя
+- `POST /api/v1/auth/login` - Вход и получение токена
 
-### Tasks
+### Задачи
 
-- `GET /api/v1/tasks/` - Get all tasks (sorted by priority)
-- `POST /api/v1/tasks/` - Create a new task
-- `GET /api/v1/tasks/{task_id}` - Get a specific task
-- `PUT /api/v1/tasks/{task_id}` - Update a task
-- `DELETE /api/v1/tasks/{task_id}` - Delete a task
+- `GET /api/v1/tasks/` - Получить все задачи (отсортированы по приоритету)
+- `POST /api/v1/tasks/` - Создать новую задачу
+- `GET /api/v1/tasks/{task_id}` - Получить конкретную задачу
+- `PUT /api/v1/tasks/{task_id}` - Обновить задачу
+- `DELETE /api/v1/tasks/{task_id}` - Удалить задачу
 
-## Task Priority Algorithm
+## Алгоритм приоритета задачи
 
-The task priority is calculated based on:
-1. User-defined priority (0.0 to 1.0)
-2. Time since creation (urgency increases with time)
-3. Task status (different multipliers for different statuses)
+Приоритет задачи рассчитывается на основе:
+1. Приоритета, заданного пользователем (от 0.0 до 1.0)
+2. Времени с момента создания (срочность увеличивается со временем)
+3. Статуса задачи (разные множители для разных статусов)
 
-The formula is:
+Формула:
 ```
 final_priority = base_priority * (1 + time_factor) * status_factor
 ```
 
-## Running Tests
+## Запуск тестов
 
-To run the test suite:
+Для запуска тестов:
 ```bash
 pytest
 ```
 
-## License
+## Лицензия
 
 MIT

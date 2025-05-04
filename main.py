@@ -8,11 +8,11 @@ from app.api.v1.api import api_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup
+    # Запуск приложения
     await init_db()
     yield
-    # Shutdown
-    # Add any cleanup code here if needed
+    # Остановка приложения
+    # Добавьте сюда код для завершения работы, если нужно
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -21,7 +21,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS middleware configuration
+# Настройка CORS middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
@@ -30,7 +30,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include API router
+# Подключение основного роутера API
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
 if __name__ == "__main__":

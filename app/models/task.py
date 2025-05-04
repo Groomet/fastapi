@@ -17,5 +17,7 @@ class Task(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     user_id = Column(Integer, ForeignKey("users.id"))
+    category_id = Column(Integer, ForeignKey("categories.id"))
 
-    user = relationship("User", back_populates="tasks") 
+    user = relationship("User", back_populates="tasks")
+    category = relationship("Category", back_populates="tasks") 
