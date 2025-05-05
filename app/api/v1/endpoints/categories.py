@@ -11,7 +11,12 @@ from app.schemas.category import Category, CategoryCreate, CategoryUpdate
 
 router = APIRouter()
 
-@router.get("/", response_model=List[Category])
+@router.get(
+    "/",
+    response_model=List[Category],
+    summary="Получить категории",
+    description="Возвращает список категорий пользователя."
+)
 async def read_categories(
     skip: int = 0,
     limit: int = 100,
@@ -21,7 +26,12 @@ async def read_categories(
     """Получить список категорий пользователя."""
     return await category_crud.get_categories(db, current_user, skip=skip, limit=limit)
 
-@router.post("/", response_model=Category)
+@router.post(
+    "/",
+    response_model=Category,
+    summary="Создать категорию",
+    description="Создаёт новую категорию для пользователя."
+)
 async def create_category(
     category: CategoryCreate,
     db: AsyncSession = Depends(get_db),
@@ -30,7 +40,12 @@ async def create_category(
     """Создать новую категорию."""
     return await category_crud.create_category(db, category, current_user)
 
-@router.get("/{category_id}", response_model=Category)
+@router.get(
+    "/{category_id}",
+    response_model=Category,
+    summary="Получить категорию",
+    description="Получить информацию о конкретной категории по её идентификатору."
+)
 async def read_category(
     category_id: int,
     db: AsyncSession = Depends(get_db),
@@ -42,7 +57,12 @@ async def read_category(
         raise HTTPException(status_code=404, detail="Category not found")
     return db_category
 
-@router.put("/{category_id}", response_model=Category)
+@router.put(
+    "/{category_id}",
+    response_model=Category,
+    summary="Обновить категорию",
+    description="Обновить информацию о категории по её идентификатору."
+)
 async def update_category(
     category_id: int,
     category: CategoryUpdate,
@@ -55,7 +75,11 @@ async def update_category(
         raise HTTPException(status_code=404, detail="Category not found")
     return db_category
 
-@router.delete("/{category_id}")
+@router.delete(
+    "/{category_id}",
+    summary="Удалить категорию",
+    description="Удалить категорию по её идентификатору."
+)
 async def delete_category(
     category_id: int,
     db: AsyncSession = Depends(get_db),

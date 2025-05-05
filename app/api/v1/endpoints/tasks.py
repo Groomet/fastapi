@@ -12,7 +12,12 @@ from app.core.priority import sort_tasks_by_priority
 
 router = APIRouter()
 
-@router.get("/", response_model=List[Task])
+@router.get(
+    "/",
+    response_model=List[Task],
+    summary="Получить задачи",
+    description="Возвращает список задач пользователя, отсортированных по приоритету."
+)
 async def read_tasks(
     skip: int = 0,
     limit: int = 100,
@@ -23,7 +28,12 @@ async def read_tasks(
     tasks = await task_crud.get_tasks(db, current_user, skip=skip, limit=limit)
     return sort_tasks_by_priority(tasks)
 
-@router.post("/", response_model=Task)
+@router.post(
+    "/",
+    response_model=Task,
+    summary="Создать задачу",
+    description="Создаёт новую задачу для пользователя."
+)
 async def create_task(
     task: TaskCreate,
     db: AsyncSession = Depends(get_db),
@@ -32,7 +42,12 @@ async def create_task(
     """Создать новую задачу."""
     return await task_crud.create_task(db, task, current_user)
 
-@router.get("/{task_id}", response_model=Task)
+@router.get(
+    "/{task_id}",
+    response_model=Task,
+    summary="Получить задачу",
+    description="Получить информацию о конкретной задаче по её идентификатору."
+)
 async def read_task(
     task_id: int,
     db: AsyncSession = Depends(get_db),
@@ -44,7 +59,12 @@ async def read_task(
         raise HTTPException(status_code=404, detail="Task not found")
     return db_task
 
-@router.put("/{task_id}", response_model=Task)
+@router.put(
+    "/{task_id}",
+    response_model=Task,
+    summary="Обновить задачу",
+    description="Обновить информацию о задаче по её идентификатору."
+)
 async def update_task(
     task_id: int,
     task: TaskUpdate,
@@ -57,7 +77,11 @@ async def update_task(
         raise HTTPException(status_code=404, detail="Task not found")
     return db_task
 
-@router.delete("/{task_id}")
+@router.delete(
+    "/{task_id}",
+    summary="Удалить задачу",
+    description="Удалить задачу по её идентификатору."
+)
 async def delete_task(
     task_id: int,
     db: AsyncSession = Depends(get_db),

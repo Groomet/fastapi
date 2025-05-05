@@ -1,7 +1,7 @@
 """Модель задачи."""
 
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey, Date, Enum
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Date, Enum
 from sqlalchemy.orm import relationship
 
 from app.core.database import Base

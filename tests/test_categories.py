@@ -31,7 +31,6 @@ async def test_read_categories(client: AsyncClient, db: AsyncSession, token_head
 
 async def test_read_category(client: AsyncClient, db: AsyncSession, token_headers):
     """Тест получения информации о категории."""
-    # Сначала создаем категорию
     create_response = await client.post(
         "/api/v1/categories/",
         headers=token_headers,
@@ -41,8 +40,6 @@ async def test_read_category(client: AsyncClient, db: AsyncSession, token_header
         }
     )
     category_id = create_response.json()["id"]
-
-    # Затем получаем информацию о ней
     response = await client.get(f"/api/v1/categories/{category_id}", headers=token_headers)
     assert response.status_code == 200
     data = response.json()
@@ -51,7 +48,6 @@ async def test_read_category(client: AsyncClient, db: AsyncSession, token_header
 
 async def test_update_category(client: AsyncClient, db: AsyncSession, token_headers):
     """Тест обновления категории."""
-    # Сначала создаем категорию
     create_response = await client.post(
         "/api/v1/categories/",
         headers=token_headers,
@@ -61,8 +57,6 @@ async def test_update_category(client: AsyncClient, db: AsyncSession, token_head
         }
     )
     category_id = create_response.json()["id"]
-
-    # Затем обновляем ее
     response = await client.put(
         f"/api/v1/categories/{category_id}",
         headers=token_headers,
@@ -78,7 +72,6 @@ async def test_update_category(client: AsyncClient, db: AsyncSession, token_head
 
 async def test_delete_category(client: AsyncClient, db: AsyncSession, token_headers):
     """Тест удаления категории."""
-    # Сначала создаем категорию
     create_response = await client.post(
         "/api/v1/categories/",
         headers=token_headers,
@@ -88,8 +81,6 @@ async def test_delete_category(client: AsyncClient, db: AsyncSession, token_head
         }
     )
     category_id = create_response.json()["id"]
-
-    # Затем удаляем ее
     response = await client.delete(f"/api/v1/categories/{category_id}", headers=token_headers)
     assert response.status_code == 200
     assert response.json()["message"] == "Category deleted successfully" 

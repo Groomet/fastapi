@@ -1,9 +1,9 @@
 """Схемы для задач."""
 
+from enum import Enum
 from datetime import datetime, date
 from typing import Optional, List
 from pydantic import BaseModel, Field, validator
-from enum import Enum
 
 class TaskStatus(str, Enum):
     """Статусы задачи."""
@@ -11,16 +11,17 @@ class TaskStatus(str, Enum):
     IN_PROGRESS = "in_progress"
     COMPLETED = "completed"
     CANCELLED = "cancelled"
+    BLOCKED = "blocked"
 
 class TaskBase(BaseModel):
     """Базовая схема задачи."""
-    title: str
-    description: Optional[str] = None
-    priority: int = Field(ge=1, le=5, description="Priority from 1 to 5")
-    status: TaskStatus = TaskStatus.PENDING
-    due_date: Optional[date] = None
-    estimated_duration: Optional[float] = Field(default=0, ge=0)
-    category_id: Optional[int] = None
+    title: str = Field(..., example="Сделать домашку")
+    description: Optional[str] = Field(None, example="Выполнить задание по математике")
+    priority: int = Field(ge=1, le=5, description="Priority from 1 to 5", example=3)
+    status: TaskStatus = Field(default=TaskStatus.PENDING, example="pending")
+    due_date: Optional[date] = Field(None, example="2024-07-01")
+    estimated_duration: Optional[float] = Field(default=0, ge=0, example=60)
+    category_id: Optional[int] = Field(None, example=1)
 
     @validator('status')
     def validate_status(cls, v):
@@ -31,7 +32,7 @@ class TaskBase(BaseModel):
 
 class TaskCreate(TaskBase):
     """Схема для создания задачи."""
-    pass
+    # pass
 
 class TaskUpdate(TaskBase):
     """Схема для обновления задачи."""
@@ -51,6 +52,7 @@ class TaskUpdate(TaskBase):
         return v
 
 class TaskInDB(TaskBase):
+    """Схема задачи в БД."""
     id: int
     status: str
     created_at: datetime
@@ -62,14 +64,16 @@ class TaskInDB(TaskBase):
         from_attributes = True
 
 class Task(TaskInDB):
-    """Схема задачи."""
-    pass
+    """Схема задачи для API."""
+    # pass
 
 class ScheduledTask(TaskInDB):
+    """Схема запланированной задачи."""
     start_time: datetime
     end_time: datetime
 
 class ScheduleResponse(BaseModel):
+    """Схема ответа для расписания задач."""
     tasks: List[ScheduledTask]
     total_duration: float
     utilization_rate: float 

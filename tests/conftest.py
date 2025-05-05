@@ -8,7 +8,7 @@ from sqlalchemy.pool import StaticPool
 
 from app.core.database import Base, get_db
 from app.core.security import create_access_token
-from app.main import app
+from main import app
 from app.models.user import User
 
 # Создаем тестовую базу данных в памяти
@@ -63,5 +63,5 @@ async def test_user(db):
 @pytest.fixture
 async def token_headers(test_user):
     """Фикстура для заголовков с токеном."""
-    access_token = create_access_token(data={"sub": test_user.email})
+    access_token = create_access_token(data={"sub": str(test_user.id)})
     return {"Authorization": f"Bearer {access_token}"} 

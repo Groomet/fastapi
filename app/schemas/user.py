@@ -1,14 +1,14 @@
 """Схемы для пользователей."""
 
-from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, EmailStr
+from datetime import datetime
+from pydantic import BaseModel, EmailStr, Field
 
 class UserBase(BaseModel):
     """Базовая схема пользователя."""
-    email: EmailStr
-    full_name: str
-    priority: int = 3  # Приоритет пользователя от 1 до 5
+    email: EmailStr = Field(..., example="user@example.com")
+    full_name: str = Field(..., example="Иван Иванов")
+    priority: int = Field(3, ge=1, le=5, example=3)
 
 class UserCreate(UserBase):
     """Схема для создания пользователя."""
@@ -35,8 +35,10 @@ class UserInDB(User):
     hashed_password: str
 
 class Token(BaseModel):
+    """Схема токена доступа."""
     access_token: str
     token_type: str
 
 class TokenPayload(BaseModel):
+    """Схема полезной нагрузки токена."""
     sub: int 

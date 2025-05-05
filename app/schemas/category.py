@@ -1,17 +1,17 @@
 """Схемы для категорий задач."""
 
-from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
+from pydantic import BaseModel, Field
 
 class CategoryBase(BaseModel):
     """Базовая схема категории."""
-    name: str
-    description: Optional[str] = None
+    name: str = Field(..., example="Учёба")
+    description: Optional[str] = Field(None, example="Задачи, связанные с учёбой")
 
 class CategoryCreate(CategoryBase):
     """Схема для создания категории."""
-    pass
+    # pass
 
 class CategoryUpdate(CategoryBase):
     """Схема для обновления категории."""

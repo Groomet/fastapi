@@ -1,6 +1,6 @@
 """Алгоритм расчета приоритета задач."""
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import List
 
 from app.models.task import Task

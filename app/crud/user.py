@@ -11,9 +11,11 @@ from app.schemas.user import UserCreate, UserUpdate
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """Проверить соответствие пароля хешу."""
     return pwd_context.verify(plain_password, hashed_password)
 
 def get_password_hash(password: str) -> str:
+    """Получить хеш пароля."""
     return pwd_context.hash(password)
 
 async def get_user(db: AsyncSession, user_id: int) -> Optional[User]:
@@ -68,6 +70,7 @@ async def update_user_password(
     user_id: int,
     new_password: str
 ) -> bool:
+    """Обновить пароль пользователя."""
     db_user = await get_user(db, user_id)
     if not db_user:
         return False
