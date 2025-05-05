@@ -1,8 +1,11 @@
+"""Конфигурация приложения."""
+
 from typing import List
 from pydantic_settings import BaseSettings
 from pydantic import AnyHttpUrl
 
 class Settings(BaseSettings):
+    """Настройки приложения."""
     # Настройки API
     API_V1_STR: str = "/api/v1"
     PROJECT_NAME: str = "Task Management API"
@@ -23,6 +26,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite+aiosqlite:///./task_management.db"
     
     class Config:
+        """Конфигурация Pydantic."""
         case_sensitive = True
         env_file = ".env"
 

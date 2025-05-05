@@ -1,3 +1,5 @@
+"""Эндпоинты для работы с задачами."""
+
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -17,6 +19,7 @@ async def read_tasks(
     db: AsyncSession = Depends(get_db),
     current_user: int = Depends(get_current_user)
 ):
+    """Получить список задач пользователя."""
     tasks = await task_crud.get_tasks(db, current_user, skip=skip, limit=limit)
     return sort_tasks_by_priority(tasks)
 
@@ -26,6 +29,7 @@ async def create_task(
     db: AsyncSession = Depends(get_db),
     current_user: int = Depends(get_current_user)
 ):
+    """Создать новую задачу."""
     return await task_crud.create_task(db, task, current_user)
 
 @router.get("/{task_id}", response_model=Task)
@@ -34,6 +38,7 @@ async def read_task(
     db: AsyncSession = Depends(get_db),
     current_user: int = Depends(get_current_user)
 ):
+    """Получить информацию о конкретной задаче."""
     db_task = await task_crud.get_task(db, task_id, current_user)
     if db_task is None:
         raise HTTPException(status_code=404, detail="Task not found")
@@ -46,6 +51,7 @@ async def update_task(
     db: AsyncSession = Depends(get_db),
     current_user: int = Depends(get_current_user)
 ):
+    """Обновить информацию о задаче."""
     db_task = await task_crud.update_task(db, task_id, task, current_user)
     if db_task is None:
         raise HTTPException(status_code=404, detail="Task not found")
@@ -57,6 +63,7 @@ async def delete_task(
     db: AsyncSession = Depends(get_db),
     current_user: int = Depends(get_current_user)
 ):
+    """Удалить задачу."""
     success = await task_crud.delete_task(db, task_id, current_user)
     if not success:
         raise HTTPException(status_code=404, detail="Task not found")

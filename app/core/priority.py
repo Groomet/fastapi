@@ -1,3 +1,5 @@
+"""Алгоритм расчета приоритета задач."""
+
 from datetime import datetime, timedelta
 from typing import List
 
@@ -98,4 +100,4 @@ def sort_tasks_by_priority(tasks: List[Task]) -> List[Task]:
         tasks,
         key=lambda task: calculate_priority(task),
         reverse=True
-    ) 
+    )

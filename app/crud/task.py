@@ -1,3 +1,5 @@
+"""CRUD операции для задач."""
+
 from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -5,16 +7,19 @@ from app.models.task import Task
 from app.schemas.task import TaskCreate, TaskUpdate
 
 async def get_task(db: AsyncSession, task_id: int, user_id: int) -> Optional[Task]:
+    """Получить задачу по ID."""
     result = await db.execute(select(Task).where(Task.id == task_id, Task.user_id == user_id))
     return result.scalar_one_or_none()
 
 async def get_tasks(db: AsyncSession, user_id: int, skip: int = 0, limit: int = 100) -> List[Task]:
+    """Получить список задач пользователя."""
     result = await db.execute(
         select(Task).where(Task.user_id == user_id).offset(skip).limit(limit)
     )
     return result.scalars().all()
 
 async def create_task(db: AsyncSession, task: TaskCreate, user_id: int) -> Task:
+    """Создать новую задачу."""
     db_task = Task(
         **task.dict(),
         user_id=user_id
@@ -25,6 +30,7 @@ async def create_task(db: AsyncSession, task: TaskCreate, user_id: int) -> Task:
     return db_task
 
 async def update_task(db: AsyncSession, task_id: int, task: TaskUpdate, user_id: int) -> Optional[Task]:
+    """Обновить задачу."""
     db_task = await get_task(db, task_id, user_id)
     if db_task:
         update_data = task.dict(exclude_unset=True)
@@ -35,6 +41,7 @@ async def update_task(db: AsyncSession, task_id: int, task: TaskUpdate, user_id:
     return db_task
 
 async def delete_task(db: AsyncSession, task_id: int, user_id: int) -> bool:
+    """Удалить задачу."""
     db_task = await get_task(db, task_id, user_id)
     if db_task:
         await db.delete(db_task)

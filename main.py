@@ -1,6 +1,8 @@
+"""Главная точка входа FastAPI-приложения Task Management API."""
+
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from contextlib import asynccontextmanager
 from fastapi.openapi.utils import get_openapi
 
 from app.core.config import settings
@@ -9,10 +11,9 @@ from app.api.v1.api import api_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Запуск приложения
+    """Контекст жизненного цикла приложения."""
     await init_db()
     yield
-    # Остановка приложения
     # Добавьте сюда код для завершения работы, если нужно
 
 app = FastAPI(
@@ -35,6 +36,7 @@ app.add_middleware(
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
 def custom_openapi():
+    """Кастомизация схемы OpenAPI для поддержки BearerAuth."""
     if app.openapi_schema:
         return app.openapi_schema
     openapi_schema = get_openapi(

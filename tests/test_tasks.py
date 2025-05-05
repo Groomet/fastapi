@@ -1,12 +1,17 @@
+"""Тесты для задач."""
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.ext.asyncio import AsyncSession
+from datetime import datetime, timedelta
+from httpx import AsyncClient
 
 from app.main import app
 from app.core.database import Base, get_db
 from app.core.security import create_access_token
 from app.models.user import User
 from app.models.task import Task
+from app.schemas.task import TaskStatus
 
 client = TestClient(app)
 
@@ -27,12 +32,16 @@ def test_token(test_user: User):
 
 @pytest.mark.asyncio
 async def test_create_task(test_token: str):
+    """Тест создания задачи."""
     response = client.post(
         "/api/v1/tasks/",
         json={
             "title": "Test Task",
             "description": "Test Description",
-            "priority": 0.5
+            "status": TaskStatus.PENDING,
+            "due_date": (datetime.utcnow() + timedelta(days=1)).isoformat(),
+            "estimated_duration": 60,  # 1 час
+            "category_id": None
         },
         headers={"Authorization": f"Bearer {test_token}"}
     )
@@ -40,10 +49,12 @@ async def test_create_task(test_token: str):
     data = response.json()
     assert data["title"] == "Test Task"
     assert data["description"] == "Test Description"
-    assert data["priority"] == 0.5
+    assert data["status"] == TaskStatus.PENDING
+    assert "id" in data
 
 @pytest.mark.asyncio
 async def test_get_tasks(test_token: str, test_user: User, db: AsyncSession):
+    """Тест получения списка задач."""
     # Create a test task
     task = Task(
         title="Test Task",
@@ -60,6 +71,7 @@ async def test_get_tasks(test_token: str, test_user: User, db: AsyncSession):
     )
     assert response.status_code == 200
     data = response.json()
+    assert isinstance(data, list)
     assert len(data) > 0
     assert data[0]["title"] == "Test Task"
 
@@ -73,6 +85,7 @@ async def test_get_task_not_found(test_token: str):
 
 @pytest.mark.asyncio
 async def test_update_task(test_token: str, test_user: User, db: AsyncSession):
+    """Тест обновления задачи."""
     # Create a test task
     task = Task(
         title="Test Task",
@@ -88,7 +101,7 @@ async def test_update_task(test_token: str, test_user: User, db: AsyncSession):
         json={
             "title": "Updated Task",
             "description": "Updated Description",
-            "priority": 0.8
+            "status": TaskStatus.IN_PROGRESS
         },
         headers={"Authorization": f"Bearer {test_token}"}
     )
@@ -96,10 +109,11 @@ async def test_update_task(test_token: str, test_user: User, db: AsyncSession):
     data = response.json()
     assert data["title"] == "Updated Task"
     assert data["description"] == "Updated Description"
-    assert data["priority"] == 0.8
+    assert data["status"] == TaskStatus.IN_PROGRESS
 
 @pytest.mark.asyncio
 async def test_delete_task(test_token: str, test_user: User, db: AsyncSession):
+    """Тест удаления задачи."""
     # Create a test task
     task = Task(
         title="Test Task",

@@ -1,0 +1,82 @@
+Мой сервис — это умная система, которая помогает пользователю всегда видеть, что действительно важно сделать в первую очередь.
+Система автоматически рассчитывает приоритет каждой задачи, учитывая множество факторов, и сортирует их для пользователя.
+Ценность для бизнеса:
+Снижение количества просроченных задач
+Повышение продуктивности сотрудников
+Прозрачность и контроль над рабочим процессом
+Возможность интеграции с корпоративными системами
+
+
+# ER-диаграмма
++----------------+         +----------------+         +----------------+
+|    User        | 1     * |     Task       | *     1 |   Category     |
++----------------+---------+----------------+---------+----------------+
+| id (PK)        |         | id (PK)        |         | id (PK)        |
+| username       |         | title          |         | name           |
+| email          |         | description    |         | description    |
+| hashed_password|         | status         |         +----------------+
+| ...            |         | priority       |
++----------------+         | due_date       |
+                           | estimated_duration |
+                           | created_at     |
+                           | updated_at     |
+                           | user_id (FK)   |
+                           | category_id(FK)|
+                           +----------------+
+
+
+
+{
+    "title": "Urgent High Priority Task",
+    "description": "Should be first due to high priority and short deadline",
+    "priority": 5,
+    "status": "pending",
+    "due_date": "2025-05-06", 
+    "estimated_duration": 2,
+    "category_id": 1
+  }
+
+{
+    "title": "In Progress Task",
+    "description": "Should be second due to in_progress status",
+    "priority": 3,
+    "status": "in_progress",
+    "due_date": "2025-05-07", 
+    "estimated_duration": 4,
+    "category_id": 1
+  }
+
+{
+    "title": "Blocked High Priority Task",
+    "description": "Should be third despite high priority due to blocked status",
+    "priority": 5,
+    "status": "blocked",
+    "due_date": "2025-05-06",  
+    "estimated_duration": 1,
+    "category_id": 1
+  }
+
+{
+    "title": "Long Low Priority Task",
+    "description": "Should be fourth due to low priority and long duration",
+    "priority": 1,
+    "status": "pending",
+    "due_date": "2025-05-10",  
+    "estimated_duration": 24,  
+    "category_id": 1
+  }
+
+{ 
+    "title": "No Deadline Task",
+    "description": "Should be last due to no deadline and low priority",
+    "priority": 1,
+    "status": "pending",
+    "due_date": null,
+    "estimated_duration": 2,
+    "category_id": 1
+  }
+
+    "pending": 1.0,      # Ожидающие задачи
+    "in_progress": 1.2,  # В процессе (повышенный приоритет)
+    "blocked": 0.3,      # Заблокированные (значительно пониженный приоритет)
+    "completed": 0.0     # Завершенные (исключаются)

@@ -1,3 +1,5 @@
+"""Эндпоинты для аутентификации и управления пользователями."""
+
 from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
@@ -16,6 +18,7 @@ async def register(
     user: UserCreate,
     db: AsyncSession = Depends(get_db)
 ):
+    """Зарегистрировать нового пользователя."""
     db_user = await user_crud.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Почта уже зарегистрирована")
@@ -26,6 +29,7 @@ async def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: AsyncSession = Depends(get_db)
 ):
+    """Войти в систему и получить токен доступа."""
     user = await user_crud.get_user_by_email(db, email=form_data.username)
     if not user or not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Неверная почта или пароль")
@@ -42,6 +46,7 @@ async def read_current_user(
     current_user: int = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
+    """Получить информацию о текущем пользователе."""
     user = await user_crud.get_user(db, current_user)
     if not user:
         raise HTTPException(status_code=404, detail="Пользователь не найден")
@@ -53,6 +58,7 @@ async def update_current_user(
     current_user: int = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
+    """Обновить информацию о текущем пользователе."""
     user = await user_crud.update_user(db, current_user, user_update)
     if not user:
         raise HTTPException(status_code=404, detail="Пользователь не найден")
@@ -65,6 +71,7 @@ async def change_password(
     current_user: int = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
+    """Изменить пароль текущего пользователя."""
     user = await user_crud.get_user(db, current_user)
     if not user:
         raise HTTPException(status_code=404, detail="Пользователь не найден")
